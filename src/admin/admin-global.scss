@@ -1,0 +1,20 @@
+// Ajustes globales propios del panel.
+//
+// La experiencia pública ocupa exactamente la pantalla y bloquea el scroll
+// para que el gesto de órbita no arrastre la página. El panel es lo contrario:
+// una herramienta con formularios y tablas que necesita crecer.
+//
+// Se importa solo desde admin/main.tsx, así que no afecta a la experiencia.
+
+body {
+  overflow: auto;
+  // Sin esto, una tabla larga quedaría recortada por la altura fija que
+  // hereda de los estilos base.
+  height: auto;
+  min-height: 100%;
+}
+
+#root {
+  height: auto;
+  min-height: 100%;
+}

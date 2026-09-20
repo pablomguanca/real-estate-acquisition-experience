@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // Los tipos de Node viven SOLO acá. Si estuvieran en el tsconfig de src,
+    // nada impediría importar 'fs' en un componente y descubrirlo en runtime.
+    // vite/client porque los tests alcanzan código del cliente, que usa
+    // import.meta.env. Los tipos de Node siguen sin llegar a src.
+    "types": ["node", "vite/client"]
+  },
+  "include": ["scripts", "tests", "vitest.config.ts"]
+}

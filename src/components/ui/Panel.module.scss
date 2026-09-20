@@ -1,0 +1,111 @@
+@use '../../styles/tokens' as *;
+
+// Cáscara compartida por los paneles informativos: posición, animación de
+// entrada y salida, y comportamiento responsive. El contenido lo pone cada
+// panel concreto con sus propios estilos.
+
+.panel {
+  position: absolute;
+  z-index: 400;
+
+  display: flex;
+  flex-direction: column;
+  padding: $space-lg;
+
+  color: $text-primary;
+  background: $surface;
+  border: 1px solid $surface-border;
+  backdrop-filter: blur(18px);
+
+  // Cerrado no debe interceptar gestos sobre la escena.
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity $duration-base $ease-out,
+    transform $duration-base $ease-out,
+    visibility 0s linear $duration-base;
+
+  // --- Desktop y tablet: panel lateral derecho -----------------------------
+  top: 50%;
+  right: $space-lg;
+  width: 23rem;
+  max-width: calc(100vw - #{$space-lg} * 2);
+  max-height: calc(100vh - #{$space-lg} * 2);
+  border-radius: $radius-md;
+  transform: translate(24px, -50%);
+
+  &[data-open] {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+    transition-delay: 0s;
+  }
+
+  // --- Mobile: hoja inferior ------------------------------------------------
+  @media (max-width: $bp-tablet) {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: auto;
+    max-width: none;
+
+    padding: $space-md $space-md calc(#{$space-lg} + env(safe-area-inset-bottom));
+    max-height: 78vh;
+    border-radius: $radius-md $radius-md 0 0;
+    border-bottom: none;
+
+    transform: translateY(100%);
+
+    &[data-open] {
+      transform: translateY(0);
+    }
+  }
+}
+
+// La ficha de unidad creció con specs, precio y plano: en pantallas bajas no
+// entra entera, así que el cuerpo scrollea mientras el panel y su botón de
+// cierre se quedan quietos.
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(242, 240, 236, 0.18) transparent;
+}
+
+.close {
+  position: absolute;
+  z-index: 1;
+  top: $space-sm;
+  right: $space-sm;
+
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  color: $text-muted;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: color $duration-fast $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    color: $text-primary;
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}

@@ -1,0 +1,127 @@
+@use '../../styles/tokens' as *;
+
+// Tipografía compartida por el contenido de los paneles.
+// La cáscara está en Panel.module.scss.
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $accent;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: $tracking-normal;
+  line-height: 1.15;
+  user-select: text;
+}
+
+.description {
+  margin: $space-xs 0 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: $text-secondary;
+  user-select: text;
+}
+
+// El título y el estado comparten línea: el estado es lo segundo que se mira
+// después de saber qué unidad es.
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-sm;
+  // Deja lugar al botón de cierre, que va en absoluto arriba a la derecha.
+  padding-right: $space-lg;
+}
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-sm $space-md;
+  margin: $space-md 0 0;
+  padding: $space-md 0 0;
+  border-top: 1px solid $surface-border;
+
+  @media (max-width: $bp-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.spec {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+
+  dt {
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.88rem;
+    color: $text-primary;
+    font-variant-numeric: tabular-nums;
+    user-select: text;
+  }
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: $space-sm;
+  flex-wrap: wrap;
+  margin: $space-md 0 0;
+  padding: $space-md 0 0;
+  border-top: 1px solid $surface-border;
+}
+
+.priceValue {
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: $text-primary;
+  font-variant-numeric: tabular-nums;
+  user-select: text;
+}
+
+.priceNote {
+  font-size: 0.68rem;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.priceAbsent {
+  margin: $space-md 0 0;
+  padding: $space-md 0 0;
+  border-top: 1px solid $surface-border;
+  font-size: 0.78rem;
+  color: $text-muted;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  // El color lo inyecta UnitPanel desde config/status.ts, que es la misma
+  // fuente que pinta el volumen en la escena.
+  color: var(--status-color);
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}

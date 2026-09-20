@@ -1,0 +1,148 @@
+rules_version = '2';
+
+// Reglas de la capa comercial.
+//
+// Esto es la frontera de seguridad real. La interfaz del panel no protege
+// nada: cualquiera puede llamar a la API de Firestore directamente sin pasar
+// por ella. Todo lo que no esté prohibido acá, está permitido.
+//
+// Principios:
+//   - Lectura pública: son precios y disponibilidad de una pieza de marketing.
+//   - Escritura autenticada, acotada por desarrollo y por campo.
+//   - La estructura del edificio no se toca desde el cliente: es calibración,
+//     viene del archivo del desarrollo y la sube el script con cuenta de
+//     servicio, que salta estas reglas por diseño.
+//
+// Verificadas con tests contra el emulador: npm run test:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ---------------------------------------------------------------- */
+    /* Identidad                                                        */
+    /* ---------------------------------------------------------------- */
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+
+    function userData() {
+      return get(userPath()).data;
+    }
+
+    function hasAccount() {
+      return signedIn() && exists(userPath());
+    }
+
+    /**
+     * Quién puede editar qué.
+     *
+     * El aislamiento entre desarrolladoras depende enteramente de esta
+     * función: un editor solo alcanza los slugs que tiene asignados.
+     */
+    function canEditProject(slug) {
+      return hasAccount() && (
+        userData().role == 'admin' ||
+        (userData().role == 'editor' && slug in userData().projects)
+      );
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Validación                                                       */
+    /* ---------------------------------------------------------------- */
+
+    /** El autor no se puede falsificar: tiene que ser quien firma el pedido. */
+    function stampedByCaller() {
+      return request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.updatedAt is string;
+    }
+
+    /** Ningún campo fuera de la lista puede cambiar. */
+    function onlyChanges(allowed) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowed);
+    }
+
+    function validStatus() {
+      return request.resource.data.status in ['disponible', 'reservado', 'vendido'];
+    }
+
+    function validPrice() {
+      return request.resource.data.price == null || (
+        request.resource.data.price is number &&
+        request.resource.data.price >= 0 &&
+        request.resource.data.price < 1000000000
+      );
+    }
+
+    function validGallery() {
+      return request.resource.data.gallery is list
+        && request.resource.data.gallery.size() <= 24;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Usuarios                                                         */
+    /* ---------------------------------------------------------------- */
+
+    match /users/{uid} {
+      // Cada uno lee solo su propio documento: el panel necesita saber su rol.
+      allow read: if signedIn() && request.auth.uid == uid;
+
+      // Nadie escribe desde el cliente, ni su propio documento.
+      //
+      // Es la regla más importante del archivo. Si un editor pudiera tocar su
+      // documento, se agregaría slugs al array y el modelo de roles dejaría de
+      // significar nada. Las altas se hacen con el script de cuenta de
+      // servicio.
+      allow write: if false;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Desarrollos                                                      */
+    /* ---------------------------------------------------------------- */
+
+    match /projects/{slug} {
+      allow read: if true;
+      // Metadatos del desarrollo: solo el script de carga.
+      allow write: if false;
+
+      match /units/{unitId} {
+        allow read: if true;
+
+        // Crear o borrar unidades cambiaría la estructura del edificio, que
+        // es calibración y vive en el archivo. Desde el cliente, nunca.
+        allow create, delete: if false;
+
+        allow update: if canEditProject(slug)
+          && onlyChanges(['status', 'price', 'gallery', 'updatedAt', 'updatedBy'])
+          && validStatus()
+          && validPrice()
+          && validGallery()
+          && stampedByCaller();
+      }
+
+      match /amenities/{amenityId} {
+        allow read: if true;
+        allow create, delete: if false;
+
+        allow update: if canEditProject(slug)
+          && onlyChanges(['name', 'description', 'gallery', 'updatedAt', 'updatedBy'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0
+          && request.resource.data.name.size() <= 80
+          && request.resource.data.description is string
+          && request.resource.data.description.size() <= 600
+          && validGallery()
+          && stampedByCaller();
+      }
+    }
+
+    // Todo lo no contemplado, cerrado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// Reglas de medios.
+//
+// Lectura pública bajo projects/: el resolvedor construye URLs de acceso
+// directo, que la requieren. Es intencional — son renders y fotos de una
+// pieza de marketing.
+//
+// Escritura autenticada y acotada, con el MISMO modelo de roles que Firestore.
+// Las reglas de Storage pueden consultar Firestore, así que no hace falta
+// duplicar la fuente de verdad: si se revoca el acceso de alguien en
+// users/{uid}, pierde también la subida de archivos.
+//
+// IMPORTANTE: además de estas reglas, el bucket necesita CORS o useGLTF falla
+// al cargar el modelo desde otro origen:
+//   gsutil cors set cors.json gs://<tu-bucket>
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function access() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasAccount() {
+      return signedIn()
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+
+    function canEditProject(slug) {
+      return hasAccount() && (
+        access().role == 'admin' ||
+        (access().role == 'editor' && slug in access().projects)
+      );
+    }
+
+    /**
+     * Una imagen razonable para web.
+     *
+     * El límite de tamaño no es una comodidad: sin él, cualquiera con acceso
+     * puede subir un archivo de gigabytes y generar una factura. Y el tipo se
+     * valida porque un bucket de lectura pública que acepta cualquier cosa es
+     * un alojamiento gratis para terceros.
+     */
+    function isWebImage() {
+      return request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp|avif)');
+    }
+
+    match /projects/{slug}/{allPaths=**} {
+      allow read: if true;
+
+      // Los editores suben imágenes. El modelo 3D y cualquier otro binario
+      // los sube Atenea, que entra como admin.
+      allow write: if canEditProject(slug) && (
+        isWebImage() ||
+        (access().role == 'admin' && request.resource.size < 200 * 1024 * 1024)
+      );
+
+      allow delete: if canEditProject(slug);
+    }
+
+    // Todo lo no contemplado, cerrado.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

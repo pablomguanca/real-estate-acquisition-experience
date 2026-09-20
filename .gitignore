@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# Claves de cuenta de servicio de Firebase: NUNCA versionar
+service-account*.json
+
+# Emulador de Firebase
+firestore-debug.log
+firebase-debug.log
+.firebase/
+
+# Datos de los emuladores
+.firebase-export/

@@ -1,0 +1,68 @@
+@use '../../styles/tokens' as *;
+
+// Pantalla previa a la experiencia: carga y error.
+// Comparte el registro visual del overlay de entrada para que el pasaje de
+// una a otra no se perciba como un cambio de aplicación.
+
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 600;
+
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: $space-md;
+  padding: $space-lg;
+  text-align: center;
+
+  background: radial-gradient(
+    ellipse 110% 80% at 50% 50%,
+    rgba(14, 17, 21, 0.9) 0%,
+    rgba(8, 10, 13, 1) 100%
+  );
+}
+
+.pulse {
+  width: 34px;
+  height: 1px;
+  background: rgba(242, 240, 236, 0.5);
+  animation: breathe 1.6s $ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scaleX(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+// Respeta a quien pidió menos movimiento en el sistema operativo.
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-secondary;
+}
+
+.message {
+  margin: 0;
+  max-width: 26rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: $text-muted;
+}

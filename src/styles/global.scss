@@ -1,0 +1,59 @@
+@use './tokens' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+// Ancla de posicionamiento para las capas de UI, que se montan como
+// hermanas del canvas y se ubican en absoluto sobre él.
+#root {
+  position: relative;
+  isolation: isolate;
+}
+
+body {
+  font-family: $font-sans;
+  color: $text-primary;
+  // La experiencia ocupa exactamente la pantalla. El panel revierte esto en
+  // admin/admin-global.scss, que solo él importa.
+  overflow: hidden;
+
+  // El cielo de la escena tapa este fondo apenas el canvas dibuja el primer
+  // frame. Queda solo para evitar el destello blanco previo y para que el
+  // color de arranque sea coherente con la escena.
+  background: radial-gradient(
+    ellipse 120% 85% at 50% 92%,
+    $bg-horizon 0%,
+    $bg-mid 42%,
+    $bg-deep 100%
+  );
+
+  // Evita el rebote elástico y el resaltado azul del tap en mobile.
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// La experiencia se navega arrastrando. Seleccionar texto al pasar por
+// encima de un control rompe el gesto, así que la UI no es seleccionable.
+// El panel informativo sí lo es: ahí el texto está para leerse y copiarse.
+#root > *:not(canvas) {
+  user-select: none;
+}
+
+canvas {
+  display: block;
+  // El canvas captura el gesto de órbita; el navegador no debe
+  // interpretarlo como scroll o pinch-zoom de página.
+  touch-action: none;
+  outline: none;
+}

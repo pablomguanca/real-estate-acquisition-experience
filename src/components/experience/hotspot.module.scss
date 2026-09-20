@@ -1,0 +1,35 @@
+@use '../../styles/tokens' as *;
+
+// La etiqueta se renderiza en DOM sobre el canvas, vía <Html> de drei.
+.label {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+
+  font-family: $font-sans;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: $text-secondary;
+
+  background: rgba(12, 14, 18, 0.55);
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  backdrop-filter: blur(6px);
+
+  // El usuario no interactúa con la etiqueta, solo la lee: el click lo
+  // recibe el disco 3D que está detrás.
+  user-select: none;
+
+  transition:
+    color $duration-fast $ease-out,
+    border-color $duration-fast $ease-out,
+    background-color $duration-fast $ease-out;
+
+  &[data-active] {
+    color: $text-primary;
+    background: rgba(12, 14, 18, 0.78);
+    border-color: rgba(201, 162, 39, 0.5);
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "real-estate-acquisition-experience",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.tools.json",
+    "seed": "tsx scripts/seed-commercial.ts",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-atenea \"vitest run tests/firestore.rules.test.ts\"",
+    "deploy:rules": "firebase deploy --only firestore:rules,storage",
+    "grant": "tsx scripts/grant-access.ts",
+    "emulators": "firebase emulators:start --only firestore,auth,storage --project demo-atenea",
+    "seed:emulator": "tsx scripts/seed-emulator.ts",
+    "test": "vitest run tests/parsePaste.test.ts"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.8",
+    "@react-three/fiber": "9.7.0",
+    "firebase": "12.19.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "@types/node": "26.6.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "firebase-admin": "14.4.0",
+    "firebase-tools": "14.27.0",
+    "sass": "1.104.1",
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "vite": "8.3.0",
+    "vitest": "5.0.1"
+  }
+}

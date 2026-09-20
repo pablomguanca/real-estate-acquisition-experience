@@ -1,0 +1,51 @@
+// Tokens de diseño.
+// Única fuente de verdad para color, tipografía y ritmo.
+// Los tonos de fondo coordinan con ATMOSPHERE.fogColor en config/scene.ts.
+
+// --- Fondo -------------------------------------------------------------------
+$bg-deep: #0b0d10;
+$bg-mid: #171b21;
+$bg-horizon: #262c35;
+
+// --- Texto -------------------------------------------------------------------
+$text-primary: #f2f0ec;
+$text-secondary: rgba(242, 240, 236, 0.62);
+$text-muted: rgba(242, 240, 236, 0.38);
+
+// --- Acento ------------------------------------------------------------------
+// Un único acento cálido, usado con moderación (hotspots, estados activos).
+$accent: #c9a227;
+$accent-soft: rgba(201, 162, 39, 0.18);
+
+// --- Superficies de UI -------------------------------------------------------
+$surface: rgba(18, 21, 26, 0.72);
+$surface-border: rgba(242, 240, 236, 0.12);
+
+// --- Tipografía --------------------------------------------------------------
+// Stack del sistema: sin descargas externas en esta fase.
+$font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'Helvetica Neue', Arial, sans-serif;
+
+$tracking-wide: 0.18em;
+$tracking-normal: 0.02em;
+
+// --- Ritmo -------------------------------------------------------------------
+$space-xs: 0.5rem;
+$space-sm: 0.875rem;
+$space-md: 1.5rem;
+$space-lg: 2.5rem;
+
+$radius-sm: 6px;
+$radius-md: 12px;
+
+// --- Movimiento --------------------------------------------------------------
+// Curvas lentas de salida: la sensación premium vive acá.
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$duration-fast: 220ms;
+$duration-base: 420ms;
+$duration-slow: 900ms;
+
+// --- Breakpoints -------------------------------------------------------------
+$bp-tablet: 768px;
+$bp-desktop: 1024px;

@@ -1,0 +1,165 @@
+@use '../styles/tokens' as *;
+
+// El panel es una herramienta de trabajo, no la experiencia. Densa, clara y
+// sobria: quien la usa viene a cambiar precios, no a impresionarse.
+
+.shell {
+  min-height: 100vh;
+  background: $bg-deep;
+  color: $text-primary;
+  font-family: $font-sans;
+}
+
+.center {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: $space-md;
+  padding: $space-lg;
+  text-align: center;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: $space-sm $space-md;
+  border-bottom: 1px solid $surface-border;
+}
+
+.brand {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $accent;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  font-size: 0.78rem;
+  color: $text-secondary;
+}
+
+.role {
+  padding: 0.1rem 0.4rem;
+  font-size: 0.6rem;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $accent;
+  background: $accent-soft;
+  border-radius: 3px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.message {
+  margin: 0;
+  max-width: 30rem;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: $text-secondary;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  width: 20rem;
+  max-width: 100%;
+  text-align: left;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  span {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+
+  input {
+    padding: 0.55rem 0.7rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: $text-primary;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid $surface-border;
+    border-radius: $radius-sm;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(201, 162, 39, 0.6);
+    }
+  }
+}
+
+.button {
+  padding: 0.6rem 1rem;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $bg-deep;
+  background: $accent;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.linkButton {
+  padding: 0.3rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.68rem;
+  color: $text-secondary;
+  background: transparent;
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.error {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  color: #e0797f;
+  background: rgba(224, 121, 127, 0.1);
+  border-radius: $radius-sm;
+}
+
+.emulatorFlag {
+  padding: 0.15rem 0.45rem;
+  font-size: 0.58rem;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: #7fc3a1;
+  background: rgba(127, 195, 161, 0.12);
+  border-radius: 3px;
+}
+
+.content {
+  padding: $space-md;
+}

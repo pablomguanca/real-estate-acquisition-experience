@@ -1,0 +1,78 @@
+@use '../../styles/tokens' as *;
+
+.plan {
+  margin: 0;
+  padding: $space-sm;
+
+  background: rgba(8, 10, 13, 0.4);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  // La planta es casi cuadrada: sin tope se come media ficha en pantallas
+  // bajas y empuja la galería fuera de vista.
+  max-height: 15rem;
+  // El SVG se dibuja en metros; sin esto los trazos se escalarían con él y
+  // quedarían gruesos en un panel chico.
+  vector-effect: non-scaling-stroke;
+}
+
+.unit {
+  fill: var(--unit-color);
+  fill-opacity: 0.14;
+  stroke: var(--unit-color);
+  stroke-opacity: 0.4;
+  stroke-width: 0.12;
+
+  transition:
+    fill-opacity $duration-fast $ease-out,
+    stroke-opacity $duration-fast $ease-out;
+
+  &[data-selected] {
+    fill-opacity: 0.42;
+    stroke-opacity: 1;
+    stroke-width: 0.2;
+  }
+}
+
+.letter {
+  fill: $text-muted;
+  font-family: $font-sans;
+  font-size: 1.6px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+  user-select: none;
+
+  &[data-selected] {
+    fill: $text-primary;
+  }
+}
+
+.compass {
+  fill: rgba(242, 240, 236, 0.45);
+  stroke: none;
+}
+
+.north {
+  fill: $text-secondary;
+  font-family: $font-sans;
+  font-size: 1.4px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.caption {
+  margin-top: $space-xs;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-muted;
+  text-align: center;
+}

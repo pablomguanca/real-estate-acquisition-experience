@@ -1,0 +1,211 @@
+@use '../styles/tokens' as *;
+
+// Herramienta interna, no parte de la experiencia. Se ve deliberadamente
+// distinta —densa, monoespaciada, funcional— para que nadie la confunda con
+// la interfaz del producto ni con algo que un cliente deba ver.
+
+.panel {
+  position: absolute;
+  top: $space-sm;
+  left: $space-sm;
+  z-index: 900;
+
+  display: flex;
+  flex-direction: column;
+  width: 21rem;
+  max-width: calc(100vw - #{$space-sm} * 2);
+  max-height: calc(100vh - #{$space-sm} * 2);
+
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  color: $text-primary;
+
+  background: rgba(10, 12, 16, 0.94);
+  border: 1px solid rgba(242, 240, 236, 0.18);
+  border-radius: $radius-sm;
+  backdrop-filter: blur(12px);
+
+  &[data-collapsed] {
+    width: auto;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: 0.5rem 0.7rem;
+  border-bottom: 1px solid rgba(242, 240, 236, 0.12);
+
+  button {
+    font-family: inherit;
+    font-size: 0.62rem;
+    color: $text-secondary;
+    background: transparent;
+    border: 1px solid rgba(242, 240, 236, 0.2);
+    border-radius: 3px;
+    padding: 0.15rem 0.45rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $text-primary;
+    }
+  }
+}
+
+.title {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $accent;
+}
+
+.body {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.section {
+  padding: 0.7rem;
+  border-bottom: 1px solid rgba(242, 240, 236, 0.08);
+
+  h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+}
+
+.readout {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+
+  > div {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-sm;
+  }
+
+  dt {
+    color: $text-muted;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+    // Los números no deben bailar al cambiar de ancho mientras orbitás.
+    font-variant-numeric: tabular-nums;
+    user-select: text;
+
+    small {
+      color: $text-muted;
+      font-size: 0.85em;
+    }
+
+    &[data-invalid] {
+      color: #e0797f;
+    }
+  }
+}
+
+.verdict {
+  margin: 0.5rem 0 0;
+  padding: 0.35rem 0.45rem;
+  line-height: 1.35;
+  color: #e0797f;
+  background: rgba(224, 121, 127, 0.1);
+  border-radius: 3px;
+
+  &[data-valid] {
+    color: #7fc3a1;
+    background: rgba(127, 195, 161, 0.1);
+  }
+}
+
+.hint {
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+  color: $text-muted;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+
+  button {
+    font-family: inherit;
+    font-size: 0.62rem;
+    color: $text-secondary;
+    background: rgba(242, 240, 236, 0.06);
+    border: 1px solid rgba(242, 240, 236, 0.18);
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $text-primary;
+      border-color: rgba(242, 240, 236, 0.34);
+    }
+  }
+}
+
+.code {
+  padding: 0.2rem 0.4rem;
+  color: $accent;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+  user-select: all;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  color: $text-secondary;
+}
+
+.slider {
+  display: block;
+  margin-bottom: 0.45rem;
+
+  input {
+    width: 100%;
+    accent-color: $accent;
+  }
+}
+
+.sliderLabel {
+  display: flex;
+  justify-content: space-between;
+  color: $text-muted;
+
+  b {
+    color: $text-primary;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.export {
+  max-height: 11rem;
+  margin: 0;
+  padding: 0.45rem;
+  overflow: auto;
+  font-size: 0.62rem;
+  line-height: 1.45;
+  color: $text-secondary;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 3px;
+  user-select: text;
+  scrollbar-width: thin;
+}

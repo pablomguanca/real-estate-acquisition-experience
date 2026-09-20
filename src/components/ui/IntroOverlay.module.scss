@@ -1,0 +1,74 @@
+@use '../../styles/tokens' as *;
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: $space-lg;
+  padding: $space-lg;
+  text-align: center;
+
+  background: radial-gradient(
+    ellipse 110% 80% at 50% 50%,
+    rgba(14, 17, 21, 0.86) 0%,
+    rgba(8, 10, 13, 0.96) 100%
+  );
+  backdrop-filter: blur(4px);
+
+  transition:
+    opacity $duration-slow $ease-out,
+    visibility 0s linear $duration-slow;
+
+  // Al salir deja de existir para el puntero, así la escena recibe los gestos.
+  &[data-hidden] {
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.name {
+  margin: 0;
+  font-size: clamp(1.6rem, 7vw, 2.75rem);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  // El tracking amplio deja un hueco visual a la derecha: lo compensamos.
+  text-indent: 0.3em;
+  color: $text-primary;
+}
+
+.rule {
+  width: 42px;
+  height: 1px;
+  background: rgba(242, 240, 236, 0.25);
+}
+
+.enter {
+  padding: 0.85rem 2.1rem;
+
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-primary;
+
+  background: transparent;
+  border: 1px solid rgba(242, 240, 236, 0.28);
+  border-radius: 999px;
+  cursor: pointer;
+
+  transition:
+    background-color $duration-base $ease-out,
+    border-color $duration-base $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(242, 240, 236, 0.08);
+    border-color: rgba(242, 240, 236, 0.55);
+  }
+}

@@ -1,0 +1,68 @@
+@use '../../styles/tokens' as *;
+
+.controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: $space-lg;
+  bottom: max(#{$space-lg}, env(safe-area-inset-bottom));
+  z-index: 300;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity $duration-slow $ease-out;
+
+  &[data-visible] {
+    opacity: 1;
+  }
+}
+
+.arrow {
+  pointer-events: auto;
+
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  color: $text-secondary;
+  background: $surface;
+  border: 1px solid $surface-border;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+
+  transition:
+    color $duration-fast $ease-out,
+    border-color $duration-fast $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    color: $text-primary;
+    border-color: rgba(242, 240, 236, 0.3);
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.label {
+  pointer-events: none;
+
+  min-width: 7.5rem;
+  text-align: center;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-secondary;
+}

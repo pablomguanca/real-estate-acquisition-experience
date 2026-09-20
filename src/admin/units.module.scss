@@ -1,0 +1,351 @@
+@use '../styles/tokens' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-md;
+  font-size: 0.75rem;
+  color: $text-secondary;
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  b {
+    color: $text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.toolbarActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.primary {
+  padding: 0.45rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $bg-deep;
+  background: $accent;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &:disabled {
+    color: $text-muted;
+    background: rgba(255, 255, 255, 0.06);
+    cursor: default;
+  }
+}
+
+.ghost {
+  padding: 0.45rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.66rem;
+  color: $text-secondary;
+  background: transparent;
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  &:hover {
+    color: $text-primary;
+  }
+}
+
+.paste {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-sm;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: $text-primary;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(201, 162, 39, 0.5);
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  th {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    text-align: left;
+    color: $text-muted;
+    border-bottom: 1px solid $surface-border;
+  }
+
+  td {
+    padding: 0.25rem 0.6rem;
+    border-bottom: 1px solid rgba(242, 240, 236, 0.06);
+  }
+
+  // Una fila con cambios sin guardar tiene que distinguirse de un vistazo:
+  // es lo que permite revisar una importación antes de publicarla.
+  tr[data-dirty] {
+    background: rgba(201, 162, 39, 0.09);
+
+    td:first-child {
+      box-shadow: inset 2px 0 0 $accent;
+    }
+  }
+}
+
+.code {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.select {
+  padding: 0.25rem 0.3rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: $surface-border;
+  }
+
+  // El desplegable nativo hereda el fondo del sistema: sin esto, las opciones
+  // salen con texto claro sobre fondo claro en algunos navegadores.
+  option {
+    color: $text-primary;
+    background: $bg-mid;
+  }
+}
+
+.price {
+  width: 7.5rem;
+  padding: 0.25rem 0.4rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: $text-primary;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+
+  &::placeholder {
+    color: $text-muted;
+    font-style: italic;
+  }
+
+  &:hover:not(:disabled),
+  &:focus {
+    border-color: $surface-border;
+    outline: none;
+  }
+}
+
+.meta {
+  font-size: 0.7rem;
+  color: $text-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: $text-secondary;
+}
+
+.error {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  color: #e0797f;
+  background: rgba(224, 121, 127, 0.1);
+  border-radius: $radius-sm;
+}
+
+.projectTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: $space-md;
+}
+
+.projectTab {
+  padding: 0.35rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  color: $text-secondary;
+  background: transparent;
+  border: 1px solid $surface-border;
+  border-radius: 999px;
+  cursor: pointer;
+
+  &[data-active] {
+    color: $bg-deep;
+    background: $accent;
+    border-color: $accent;
+  }
+}
+
+// --- Fichas de espacios comunes ---------------------------------------------
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  gap: $space-sm;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-sm;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+
+  &[data-dirty] {
+    background: rgba(201, 162, 39, 0.09);
+    border-color: rgba(201, 162, 39, 0.45);
+  }
+}
+
+.cardField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  span {
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    color: $text-muted;
+  }
+
+  small {
+    align-self: flex-end;
+    font-size: 0.62rem;
+    color: $text-muted;
+    font-variant-numeric: tabular-nums;
+  }
+
+  input,
+  textarea {
+    padding: 0.4rem 0.5rem;
+    font-family: inherit;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: $text-primary;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid $surface-border;
+    border-radius: $radius-sm;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      border-color: rgba(201, 162, 39, 0.5);
+    }
+  }
+}
+
+// --- Solapas de sección -----------------------------------------------------
+
+.tabs {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: $space-sm;
+  border-bottom: 1px solid $surface-border;
+}
+
+.tab {
+  padding: 0.45rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  color: $text-muted;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+
+  &:hover {
+    color: $text-secondary;
+  }
+
+  &[data-active] {
+    color: $text-primary;
+    border-bottom-color: $accent;
+  }
+}
+
+// La galería de una unidad se despliega en una fila extra de la tabla.
+.galleryRow td {
+  padding: $space-sm 0.6rem;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.expand {
+  padding: 0.2rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.68rem;
+  color: $text-secondary;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+
+  &:hover,
+  &[data-open] {
+    color: $text-primary;
+    border-color: $surface-border;
+  }
+}
