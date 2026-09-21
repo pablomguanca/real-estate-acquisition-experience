@@ -1,4 +1,4 @@
-import type { Floor, Unit } from '../types/floor';
+import type { Floor, Orientation, Unit, UnitFootprint } from '../types/floor';
 
 /**
  * Consultas sobre los pisos de un desarrollo.
@@ -8,6 +8,25 @@ import type { Floor, Unit } from '../types/floor';
  * las consultas conocieran una lista global, la plataforma sabía de un único
  * proyecto aunque el resto pareciera genérico.
  */
+
+/**
+ * Orientación deducida del cuadrante que ocupa la unidad.
+ *
+ * +Z es el frente, que tomamos como norte, y +X el este.
+ *
+ * Se deriva y no se escribe: una ficha que dice "noreste" sobre una unidad
+ * dibujada al suroeste destruye la credibilidad de todo lo demás. Vive acá
+ * —y no en el archivo de un desarrollo— porque la usan tanto los datos de
+ * PROJECT 01 como el script que da de alta un desarrollo nuevo, y las dos
+ * tienen que coincidir.
+ */
+export function orientationOf(footprint: UnitFootprint): Orientation {
+  const [x, z] = footprint.offset;
+  const northSouth = z >= 0 ? 'Nor' : 'Sur';
+  const eastWest = x >= 0 ? 'este' : 'oeste';
+
+  return `${northSouth}${eastWest}` as Orientation;
+}
 
 /** Los pisos se listan de arriba hacia abajo, como en un ascensor. */
 export function floorsTopDown(floors: Floor[]): Floor[] {

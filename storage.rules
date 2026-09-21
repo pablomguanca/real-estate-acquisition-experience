@@ -15,6 +15,24 @@ rules_version = '2';
 // al cargar el modelo desde otro origen:
 //   gsutil cors set cors.json gs://<tu-bucket>
 
+// ROL DE IAM, sin el cual nada de esto funciona.
+//
+// Consultar Firestore desde acá convierte a estas reglas en "cross-service",
+// y para eso el agente de servicio de Cloud Storage necesita permiso de IAM
+// para leer Firestore. La CLI lo ofrece al desplegar:
+//
+//   ? Cloud Storage for Firebase needs an IAM Role to use cross-service
+//     rules. Grant the new role? (Y/n)      <- hay que responder Y
+//
+// Si no se otorga, firestore.get falla, canEditProject da falso y NADIE puede
+// subir un archivo, ni siquiera un admin. Las lecturas siguen andando porque
+// son públicas y no consultan nada, así que el síntoma parece un problema del
+// panel y no de permisos: se sube una foto y responde "no tenés permiso".
+//
+// Ojo: la CLI solo pregunta cuando sube un archivo de reglas distinto al que
+// ya está publicado. Si el contenido no cambió, saltea la verificación y el
+// deploy termina en verde con el rol igualmente ausente.
+
 service firebase.storage {
   match /b/{bucket}/o {
 

@@ -1,4 +1,4 @@
-import type { UnitStatus } from '../types/floor';
+import { normalizePrice, normalizeStatus } from '../data/spreadsheet';
 import { type UnitEdit, type UnitRow, unitCode } from './useUnits';
 
 /**
@@ -24,33 +24,6 @@ export interface PasteResult {
   unknown: string[];
   /** Líneas que no se pudieron interpretar. */
   invalid: string[];
-}
-
-const STATUSES: UnitStatus[] = ['disponible', 'reservado', 'vendido'];
-
-function normalizeStatus(value: string): UnitStatus | null {
-  const clean = value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-
-  return STATUSES.find((status) => status === clean) ?? null;
-}
-
-/**
- * Tolera lo que produce una planilla en español: separador de miles con punto,
- * símbolo de moneda, espacios. "US$ 194.500" y "194500" llegan al mismo número.
- */
-function normalizePrice(value: string): number | null | undefined {
-  const clean = value.trim();
-  if (clean === '') return undefined;
-  if (/^(null|-|s\/d|sin precio)$/i.test(clean)) return null;
-
-  const digits = clean.replace(/[^\d,.-]/g, '').replace(/\.(?=\d{3}\b)/g, '').replace(',', '.');
-  const parsed = Number(digits);
-
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
 }
 
 export function parsePaste(text: string, rows: UnitRow[]): PasteResult {

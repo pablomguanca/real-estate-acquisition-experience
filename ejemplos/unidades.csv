@@ -1,0 +1,13 @@
+Piso;Unidad;Tipología;Cubierta;Balcón;Ambientes;Baños;Estado;Precio
+1;A;A;42;6;2;1;Disponible;US$ 131.000
+1;B;B;58;9;3;2;Vendido;-
+1;C;C;56;8;3;2;Disponible;US$ 172.500
+1;D;D;44;7;2;1;Reservado;US$ 137.000
+2;A;A;42;6;2;1;Disponible;US$ 133.500
+2;B;B;58;9;3;2;Disponible;US$ 178.000
+2;C;C;56;8;3;2;Vendido;-
+2;D;D;44;7;2;1;Disponible;US$ 139.500
+3;A;A;42;6;2;1;Reservado;US$ 136.000
+3;B;B;58;9;3;2;Disponible;US$ 181.500
+3;C;C;56;8;3;2;Disponible;US$ 175.500
+3;D;D;44;7;2;1;Disponible;US$ 142.000

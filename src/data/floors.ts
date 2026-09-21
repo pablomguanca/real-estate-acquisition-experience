@@ -1,10 +1,5 @@
-import type {
-  Floor,
-  Orientation,
-  Unit,
-  UnitFootprint,
-  UnitStatus,
-} from '../types/floor';
+import type { Floor, Unit, UnitFootprint, UnitStatus } from '../types/floor';
+import { orientationOf } from './queries';
 
 /**
  * Pisos y unidades de la torre.
@@ -93,19 +88,6 @@ const UNIT_LABELS = Object.keys(TYPOLOGIES);
 /** Precio por m² al nivel 1, y cuánto suma cada piso de altura. */
 const BASE_PRICE_PER_M2 = 2600;
 const PRICE_PER_LEVEL = 55;
-
-/**
- * La orientación se deduce del cuadrante: +Z es el frente, que tomamos como
- * norte, y +X es el este. Derivarla evita que la ficha y el plano digan cosas
- * distintas sobre la misma unidad.
- */
-function orientationOf(footprint: UnitFootprint): Orientation {
-  const [x, z] = footprint.offset;
-  const northSouth = z >= 0 ? 'Nor' : 'Sur';
-  const eastWest = x >= 0 ? 'este' : 'oeste';
-
-  return `${northSouth}${eastWest}` as Orientation;
-}
 
 function priceOf(area: number, level: number, status: UnitStatus): number | null {
   if (status === 'vendido') return null;

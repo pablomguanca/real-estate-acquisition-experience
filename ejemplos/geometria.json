@@ -1,0 +1,19 @@
+{
+  "slug": "ejemplo-torre",
+  "name": "TORRE EJEMPLO",
+  "tagline": "Explorá el proyecto",
+
+  "firstSlab": 6.7,
+  "floorHeight": 3,
+
+  "plan": [15, 13],
+
+  "footprints": {
+    "A": { "offset": [-3.95, 3.45], "size": [7.7, 6.7] },
+    "B": { "offset": [3.95, 3.45], "size": [7.7, 6.7] },
+    "C": { "offset": [3.95, -3.45], "size": [7.7, 6.7] },
+    "D": { "offset": [-3.95, -3.45], "size": [7.7, 6.7] }
+  },
+
+  "scene": {}
+}

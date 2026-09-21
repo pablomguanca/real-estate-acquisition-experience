@@ -115,6 +115,19 @@ export function ProjectGate({
     };
   }, [slug]);
 
+  /**
+   * El título de la pestaña lleva el nombre del desarrollo.
+   *
+   * No es cosmética: la plataforma sirve a varios clientes desde el mismo
+   * sitio, y este texto es lo que aparece en la pestaña, en el marcador y en
+   * la vista previa de un link compartido por WhatsApp. Un título fijo hace
+   * que el desarrollo de una inmobiliaria se anuncie con el nombre de otra.
+   */
+  useEffect(() => {
+    if (state.status !== 'ready') return;
+    document.title = state.project.name;
+  }, [state]);
+
   const value = useMemo<ProjectContextValue | null>(() => {
     if (state.status !== 'ready') return null;
 
