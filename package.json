@@ -14,7 +14,7 @@
     "grant": "tsx scripts/grant-access.ts",
     "emulators": "firebase emulators:start --only firestore,auth,storage --project demo-atenea",
     "seed:emulator": "tsx scripts/seed-emulator.ts",
-    "test": "vitest run tests/parsePaste.test.ts"
+    "test": "vitest run tests/parsePaste.test.ts tests/history.test.ts"
   },
   "dependencies": {
     "@react-three/drei": "10.7.8",

@@ -1,0 +1,24 @@
+@use '../styles/tokens' as *;
+
+// Distingue una unidad de un espacio común sin gastar una columna entera.
+.entity {
+  margin-left: 0.4rem;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-muted;
+}
+
+// El valor anterior se lee como algo ya superado, el nuevo como el vigente.
+// Sin este contraste las dos columnas se confunden al barrer la tabla.
+.before {
+  color: $text-muted;
+  text-decoration: line-through;
+  text-decoration-color: rgba(242, 240, 236, 0.3);
+  font-variant-numeric: tabular-nums;
+}
+
+.after {
+  font-variant-numeric: tabular-nums;
+}

@@ -138,6 +138,54 @@ service cloud.firestore {
           && validGallery()
           && stampedByCaller();
       }
+
+      /**
+       * Historial de cambios.
+       *
+       * Lo que convierte esto en evidencia y no en una lista de notas son dos
+       * reglas: que el autor no se pueda falsificar, y que lo escrito no se
+       * pueda tocar. Un historial editable no prueba absolutamente nada, y
+       * por eso ni siquiera un admin puede corregir una anotación.
+       *
+       * La lectura queda restringida a quien puede editar el desarrollo. Los
+       * precios son públicos porque son una pieza de marketing; quién los
+       * cambió y cuándo es información interna de la desarrolladora.
+       *
+       * LÍMITE CONOCIDO: las reglas evalúan cada documento por separado y no
+       * ven el resto del lote, así que no pueden exigir que un cambio de
+       * precio venga acompañado de su anotación. El panel las manda juntas en
+       * un mismo batch; alguien con credenciales que escriba directo contra
+       * la API puede cambiar un precio sin dejar rastro. Cerrar eso del todo
+       * requiere un disparador de Cloud Functions, que es trabajo de
+       * servidor. Lo anotado es confiable; la ausencia de anotación no prueba
+       * que no hubo cambio.
+       */
+      match /history/{entryId} {
+        allow read: if canEditProject(slug);
+
+        allow create: if canEditProject(slug)
+          && request.resource.data.keys().hasOnly([
+            'at', 'by', 'byEmail', 'entity', 'entityId', 'label', 'field', 'from', 'to'
+          ])
+          && request.resource.data.keys().hasAll([
+            'at', 'by', 'byEmail', 'entity', 'entityId', 'label', 'field', 'from', 'to'
+          ])
+          // El autor es quien firma el pedido, no quien el cliente diga.
+          && request.resource.data.by == request.auth.uid
+          && request.resource.data.byEmail == request.auth.token.email
+          && request.resource.data.at is string
+          && request.resource.data.entity in ['unit', 'amenity']
+          && request.resource.data.field in [
+            'status', 'price', 'gallery', 'name', 'description'
+          ]
+          && request.resource.data.entityId is string
+          && request.resource.data.label is string
+          && request.resource.data.from is string
+          && request.resource.data.to is string;
+
+        // Append-only: sin esto el registro no sirve como respaldo de nada.
+        allow update, delete: if false;
+      }
     }
 
     // Todo lo no contemplado, cerrado.

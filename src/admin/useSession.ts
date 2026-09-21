@@ -3,7 +3,7 @@ import { type User, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 import type { UserAccess } from '../types/access';
-import { getAdminAuth, getAdminDb } from './firebase';
+import { getAdminAuth, getAdminDb, isAdminConfigured } from './firebase';
 
 /**
  * Quién está usando el panel y qué puede tocar.
@@ -29,6 +29,15 @@ export function useSession(): Session {
   const [session, setSession] = useState<Session>({ status: 'loading' });
 
   useEffect(() => {
+    // Sin configuración no hay a quién preguntarle por la sesión.
+    //
+    // Sin este corte el efecto intenta inicializar Firebase igual y lanza una
+    // excepción, que es peor de lo que parece: los hooks corren aunque el
+    // componente haya devuelto otra pantalla, así que el error terminaba
+    // tapando justamente el cartel que explica qué falta. El panel parecía
+    // roto cuando en realidad solo estaba sin configurar.
+    if (!isAdminConfigured()) return;
+
     const unsubscribe = onAuthStateChanged(getAdminAuth(), async (user) => {
       if (!user) {
         setSession({ status: 'signed-out' });

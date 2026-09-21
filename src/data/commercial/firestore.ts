@@ -1,4 +1,4 @@
-import { getFirebaseConfig } from '../../services/firebase';
+import { EMULATOR, getFirebaseConfig } from '../../services/firebase';
 import type {
   AmenityCommercial,
   ProjectCommercial,
@@ -34,12 +34,19 @@ async function getDb() {
 
   if (!dbPromise) {
     dbPromise = (async () => {
-      const [{ initializeApp }, { getFirestore }] = await Promise.all([
-        import('firebase/app'),
-        import('firebase/firestore'),
-      ]);
+      const [{ initializeApp }, { connectFirestoreEmulator, getFirestore }] =
+        await Promise.all([import('firebase/app'), import('firebase/firestore')]);
 
-      return getFirestore(initializeApp(config));
+      const db = getFirestore(initializeApp(config));
+
+      // Sin esto, en local la experiencia leería precios de producción y
+      // resolvería las imágenes contra el emulador: datos de un lado, medios
+      // del otro.
+      if (EMULATOR.enabled) {
+        connectFirestoreEmulator(db, EMULATOR.host, EMULATOR.firestorePort);
+      }
+
+      return db;
     })();
   }
 

@@ -50,10 +50,30 @@ const config = {
 
 /** Mínimo indispensable para leer documentos. */
 export function isFirestoreConfigured(): boolean {
-  return Boolean(config.apiKey && config.projectId);
+  // Con emuladores siempre hay a dónde ir, aunque .env.local esté vacío.
+  return EMULATOR.enabled || Boolean(config.apiKey && config.projectId);
 }
 
+/**
+ * Con qué proyecto habla la aplicación.
+ *
+ * La rama de emuladores está ACÁ y no en cada consumidor a propósito. Cuando
+ * el panel decidía por su cuenta, terminó escribiendo en el emulador y
+ * leyendo de producción. Un solo lugar decide, y todos —panel, experiencia
+ * pública y resolvedor de medios— quedan obligados a coincidir.
+ *
+ * El prefijo demo- en el projectId le avisa al SDK que no intente hablar con
+ * servicios reales, así que una credencial de mentira alcanza.
+ */
 export function getFirebaseConfig(): FirebaseConfig | null {
+  if (EMULATOR.enabled) {
+    return {
+      apiKey: 'demo-key',
+      projectId: EMULATOR.projectId,
+      storageBucket: EMULATOR.bucket,
+    };
+  }
+
   if (!isFirestoreConfigured()) return null;
 
   return {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { GalleryEditor } from './GalleryEditor';
+import type { Author } from './history';
 import { type AmenityEdit, type AmenityRow, useAmenities } from './useAmenities';
 import styles from './units.module.scss';
 
@@ -17,11 +18,11 @@ import styles from './units.module.scss';
 
 interface AmenitiesEditorProps {
   slug: string;
-  uid: string;
+  author: Author;
   canEdit: boolean;
 }
 
-export function AmenitiesEditor({ slug, uid, canEdit }: AmenitiesEditorProps) {
+export function AmenitiesEditor({ slug, author, canEdit }: AmenitiesEditorProps) {
   const { status, rows, message, save } = useAmenities(slug);
 
   const [edits, setEdits] = useState<Record<string, AmenityEdit>>({});
@@ -52,7 +53,7 @@ export function AmenitiesEditor({ slug, uid, canEdit }: AmenitiesEditorProps) {
     setError(null);
 
     try {
-      await save(edits, uid);
+      await save(edits, author);
       setEdits({});
     } catch (cause) {
       setError(

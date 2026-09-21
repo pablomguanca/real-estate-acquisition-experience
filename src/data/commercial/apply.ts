@@ -43,6 +43,7 @@ export function applyCommercial(
       ...amenity,
       name: overlay.name ?? amenity.name,
       description: overlay.description ?? amenity.description,
+      gallery: overlay.gallery ?? amenity.gallery,
     };
   });
 

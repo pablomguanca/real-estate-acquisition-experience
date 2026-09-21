@@ -1,4 +1,5 @@
 import type { Amenity } from '../../types/amenity';
+import { Gallery } from './Gallery';
 import { Panel } from './Panel';
 import styles from './PanelContent.module.scss';
 
@@ -22,6 +23,8 @@ export function AmenityPanel({ amenity, onClose }: AmenityPanelProps) {
           <p className={styles.eyebrow}>Amenity</p>
           <h2 className={styles.title}>{amenity.name}</h2>
           <p className={styles.description}>{amenity.description}</p>
+
+          <Gallery images={amenity.gallery} name={amenity.name} />
         </>
       )}
     </Panel>

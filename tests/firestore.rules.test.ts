@@ -280,6 +280,132 @@ describe('metadatos del desarrollo', () => {
   });
 });
 
+describe('historial de cambios', () => {
+  /**
+   * El historial solo vale como respaldo si cumple dos cosas: que el autor no
+   * se pueda falsificar y que lo escrito no se pueda tocar. Todo lo demás del
+   * registro es comodidad; esto es lo que lo hace evidencia.
+   */
+
+  // El correo va en el token: las reglas lo comparan contra el de la anotación.
+  const asAna = () =>
+    testEnv
+      .authenticatedContext('ana', { email: 'ana@desarrolladora.com' })
+      .firestore();
+
+  const asAtenea = () =>
+    testEnv.authenticatedContext('atenea', { email: 'equipo@atenea.com' }).firestore();
+
+  const entry = (overrides: Record<string, unknown> = {}) => ({
+    at: '2026-09-20T18:00:00.000Z',
+    by: 'ana',
+    byEmail: 'ana@desarrolladora.com',
+    entity: 'unit',
+    entityId: 'floor-08-c',
+    label: '08C',
+    field: 'price',
+    from: '194500',
+    to: '250000',
+    ...overrides,
+  });
+
+  it('un editor anota un cambio en su desarrollo', async () => {
+    await assertSucceeds(
+      setDoc(doc(asAna(), 'projects/project-01/history/e1'), entry()),
+    );
+  });
+
+  it('un editor NO anota en un desarrollo ajeno', async () => {
+    await assertFails(
+      setDoc(doc(asAna(), 'projects/project-02/history/e1'), entry()),
+    );
+  });
+
+  it('nadie firma una anotación con otro uid', async () => {
+    await assertFails(
+      setDoc(doc(asAna(), 'projects/project-01/history/e1'), entry({ by: 'atenea' })),
+    );
+  });
+
+  it('nadie firma una anotación con otro correo', async () => {
+    // Sin esto, el correo mostrado en pantalla sería una declaración del
+    // cliente y no un dato del token: cualquiera podría atribuirle un cambio
+    // a otra persona.
+    await assertFails(
+      setDoc(
+        doc(asAna(), 'projects/project-01/history/e1'),
+        entry({ byEmail: 'equipo@atenea.com' }),
+      ),
+    );
+  });
+
+  it('rechaza un campo que no existe en el modelo', async () => {
+    await assertFails(
+      setDoc(doc(asAna(), 'projects/project-01/history/e1'), entry({ field: 'position' })),
+    );
+  });
+
+  it('rechaza una anotación con campos de más', async () => {
+    await assertFails(
+      setDoc(doc(asAna(), 'projects/project-01/history/e1'), entry({ nota: 'cualquiera' })),
+    );
+  });
+
+  it('rechaza una anotación incompleta', async () => {
+    const { from, ...sinFrom } = entry();
+    await assertFails(setDoc(doc(asAna(), 'projects/project-01/history/e1'), sinFrom));
+  });
+
+  describe('append-only', () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await setDoc(
+          doc(context.firestore(), 'projects/project-01/history/existente'),
+          entry(),
+        );
+      });
+    });
+
+    it('ni el autor corrige lo que escribió', async () => {
+      await assertFails(
+        updateDoc(doc(asAna(), 'projects/project-01/history/existente'), { to: '999' }),
+      );
+    });
+
+    it('ni un admin edita una anotación', async () => {
+      await assertFails(
+        updateDoc(doc(asAtenea(), 'projects/project-01/history/existente'), { to: '999' }),
+      );
+    });
+
+    it('ni un admin borra una anotación', async () => {
+      // Es la regla que sostiene todo lo demás: un historial que el
+      // responsable puede limpiar no respalda nada.
+      await assertFails(
+        deleteDoc(doc(asAtenea(), 'projects/project-01/history/existente')),
+      );
+    });
+
+    it('tampoco se pisa escribiendo encima con el mismo id', async () => {
+      await assertFails(
+        setDoc(doc(asAna(), 'projects/project-01/history/existente'), entry({ to: '999' })),
+      );
+    });
+
+    it('el editor lee el historial de su desarrollo', async () => {
+      await assertSucceeds(
+        getDoc(doc(asAna(), 'projects/project-01/history/existente')),
+      );
+    });
+
+    it('el público NO lee el historial', async () => {
+      // Los precios son públicos; quién los cambió y cuándo es interno.
+      const db = testEnv.unauthenticatedContext().firestore();
+      await assertFails(getDoc(doc(db, 'projects/project-01/history/existente')));
+    });
+  });
+});
+
 it('el archivo de reglas es el que está en el repo', () => {
   // Guarda contra el error de probar unas reglas y desplegar otras.
   expect(readFileSync('firestore.rules', 'utf8')).toContain('canEditProject');

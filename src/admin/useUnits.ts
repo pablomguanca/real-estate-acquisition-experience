@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
 
 import type { UnitStatus } from '../types/floor';
+import { type Author, assertBatchSize, unitHistory } from './history';
 import { getAdminDb } from './firebase';
 
 /**
@@ -86,7 +87,7 @@ export function useUnits(slug: string | null) {
    * lista de precios a medio guardar sería peor que no guardarla.
    */
   const save = useCallback(
-    async (edits: Record<string, UnitEdit>, uid: string) => {
+    async (edits: Record<string, UnitEdit>, author: Author) => {
       if (!slug) return;
 
       const ids = Object.keys(edits);
@@ -96,18 +97,29 @@ export function useUnits(slug: string | null) {
       const batch = writeBatch(db);
       const now = new Date().toISOString();
 
+      const entries = unitHistory(state.rows, edits, author, now);
+
+      // El cambio y su anotación viajan en el mismo lote: si el historial no
+      // se puede escribir, el cambio tampoco entra. Un precio modificado sin
+      // rastro es justamente lo que este registro existe para impedir.
+      assertBatchSize(ids.length + entries.length);
+
       for (const id of ids) {
         batch.update(doc(db, 'projects', slug, 'units', id), {
           ...edits[id],
           updatedAt: now,
-          updatedBy: uid,
+          updatedBy: author.uid,
         });
+      }
+
+      for (const entry of entries) {
+        batch.set(doc(collection(db, 'projects', slug, 'history')), entry);
       }
 
       await batch.commit();
       await load();
     },
-    [slug, load],
+    [slug, load, state.rows],
   );
 
   return { ...state, reload: load, save };

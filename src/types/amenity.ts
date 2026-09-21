@@ -13,4 +13,11 @@ export interface Amenity {
   description: string;
   /** Punto en el espacio 3D donde se ancla el hotspot, en metros. */
   position: Vec3;
+  /**
+   * Rutas dentro del almacenamiento, nunca URLs completas.
+   *
+   * Es capa comercial: el panel las edita y la posición de arriba no, porque
+   * esa se midió contra el modelo. Misma forma que Unit.gallery.
+   */
+  gallery: string[];
 }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
 
 import { getAdminDb } from './firebase';
+import { type Author, amenityHistory, assertBatchSize } from './history';
 
 /**
  * Los espacios comunes de un desarrollo, en su capa editable.
@@ -76,7 +77,7 @@ export function useAmenities(slug: string | null) {
   }, [load]);
 
   const save = useCallback(
-    async (edits: Record<string, AmenityEdit>, uid: string) => {
+    async (edits: Record<string, AmenityEdit>, author: Author) => {
       if (!slug) return;
 
       const ids = Object.keys(edits);
@@ -86,18 +87,29 @@ export function useAmenities(slug: string | null) {
       const batch = writeBatch(db);
       const now = new Date().toISOString();
 
+      const entries = amenityHistory(state.rows, edits, author, now);
+
+      // El cambio y su anotación viajan en el mismo lote: si el historial no
+      // se puede escribir, el cambio tampoco entra. Un precio modificado sin
+      // rastro es justamente lo que este registro existe para impedir.
+      assertBatchSize(ids.length + entries.length);
+
       for (const id of ids) {
         batch.update(doc(db, 'projects', slug, 'amenities', id), {
           ...edits[id],
           updatedAt: now,
-          updatedBy: uid,
+          updatedBy: author.uid,
         });
+      }
+
+      for (const entry of entries) {
+        batch.set(doc(collection(db, 'projects', slug, 'history')), entry);
       }
 
       await batch.commit();
       await load();
     },
-    [slug, load],
+    [slug, load, state.rows],
   );
 
   return { ...state, reload: load, save };

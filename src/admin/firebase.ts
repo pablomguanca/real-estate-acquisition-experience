@@ -24,29 +24,20 @@ import { EMULATOR, getFirebaseConfig } from '../services/firebase';
 
 const USE_EMULATORS = EMULATOR.enabled;
 
-/**
- * Con emuladores alcanza un projectId cualquiera: el prefijo demo- le dice al
- * SDK que no intente hablar con servicios reales.
- */
-const EMULATOR_CONFIG = {
-  apiKey: 'demo-key',
-  projectId: EMULATOR.projectId,
-  storageBucket: EMULATOR.bucket,
-};
-
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 let storage: FirebaseStorage | null = null;
 
 export function isAdminConfigured(): boolean {
-  return USE_EMULATORS || getFirebaseConfig() !== null;
+  return getFirebaseConfig() !== null;
 }
 
 function getApp(): FirebaseApp {
   if (app) return app;
 
-  const config = USE_EMULATORS ? EMULATOR_CONFIG : getFirebaseConfig();
+  // Incluida la rama de emuladores: la decide getFirebaseConfig, no acá.
+  const config = getFirebaseConfig();
 
   if (!config) {
     throw new Error(

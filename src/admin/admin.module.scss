@@ -150,6 +150,18 @@
   border-radius: $radius-sm;
 }
 
+// Confirmación, no alarma: mismo peso visual que .error pero en el verde
+// que el panel ya usa para lo que salió bien.
+.notice {
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #7fc3a1;
+  background: rgba(127, 195, 161, 0.1);
+  border-radius: $radius-sm;
+}
+
 .emulatorFlag {
   padding: 0.15rem 0.45rem;
   font-size: 0.58rem;

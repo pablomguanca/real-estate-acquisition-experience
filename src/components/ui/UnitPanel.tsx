@@ -1,7 +1,7 @@
 import { UNIT_STATUS } from '../../config/status';
 import type { Floor, Unit } from '../../types/floor';
 import { Panel } from './Panel';
-import { UnitGallery } from './UnitGallery';
+import { Gallery } from './Gallery';
 import { UnitPlan } from './UnitPlan';
 import styles from './PanelContent.module.scss';
 
@@ -95,7 +95,10 @@ export function UnitPanel({ unit, floor, onClose }: UnitPanelProps) {
 
           <UnitPlan floor={floor} selectedUnitId={unit.id} />
 
-          <UnitGallery unit={unit} />
+          <Gallery
+            images={unit.gallery}
+            name={`Unidad ${floor.label}${unit.label}`}
+          />
         </>
       )}
     </Panel>

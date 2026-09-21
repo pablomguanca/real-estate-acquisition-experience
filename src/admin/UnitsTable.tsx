@@ -3,6 +3,7 @@ import { Fragment, useMemo, useState } from 'react';
 import type { UnitStatus } from '../types/floor';
 import { UNIT_STATUS } from '../config/status';
 import { GalleryEditor } from './GalleryEditor';
+import type { Author } from './history';
 import { type PasteResult, parsePaste } from './parsePaste';
 import { type UnitEdit, type UnitRow, unitCode, useUnits } from './useUnits';
 import styles from './units.module.scss';
@@ -27,11 +28,11 @@ const priceFormatter = new Intl.NumberFormat('es-AR', {
 
 interface UnitsTableProps {
   slug: string;
-  uid: string;
+  author: Author;
   canEdit: boolean;
 }
 
-export function UnitsTable({ slug, uid, canEdit }: UnitsTableProps) {
+export function UnitsTable({ slug, author, canEdit }: UnitsTableProps) {
   const { status, rows, message, save } = useUnits(slug);
 
   const [edits, setEdits] = useState<Record<string, UnitEdit>>({});
@@ -90,7 +91,7 @@ export function UnitsTable({ slug, uid, canEdit }: UnitsTableProps) {
     setError(null);
 
     try {
-      await save(edits, uid);
+      await save(edits, author);
       setEdits({});
       setPasteResult(null);
       setPasteText('');
