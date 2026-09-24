@@ -1,0 +1,267 @@
+@use '../../styles/tokens' as *;
+
+/*
+ * El recorrido tapa todo.
+ *
+ * No es un panel más sobre la escena: mientras dura, es la única pieza en
+ * pantalla. Media transparencia o un marco visible romperían la ilusión de
+ * estar parado adentro del departamento, que es exactamente lo que se vende.
+ */
+.tour {
+  position: fixed;
+  inset: 0;
+  // Por encima de la ficha (400), por debajo de la pantalla de carga y del
+  // overlay de entrada (500-600), que son estados previos a la experiencia.
+  z-index: 450;
+  background: $bg-deep;
+  animation: appear $duration-base $ease-out;
+
+  canvas {
+    // El cursor dice que se puede arrastrar antes de que nadie lo intente.
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: $space-md;
+  // Degradado y no una barra: una franja sólida cortaría la panorámica en dos.
+  background: linear-gradient(to bottom, rgba(11, 13, 16, 0.75), transparent);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.58rem;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $accent;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: $tracking-normal;
+  color: $text-primary;
+}
+
+.close {
+  flex: 0 0 auto;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: $text-primary;
+  background: $surface;
+  border: 1px solid $surface-border;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background $duration-fast $ease-out;
+
+  &:hover {
+    background: rgba(28, 32, 39, 0.9);
+  }
+
+  svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+}
+
+.hint {
+  position: absolute;
+  top: $space-lg;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: $tracking-normal;
+  color: $text-secondary;
+  pointer-events: none;
+  // Se desvanece sola: la instrucción sirve al principio y estorba después.
+  animation: fade 6s $ease-out forwards;
+}
+
+@keyframes fade {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.rooms {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: $space-xs;
+  padding: $space-md;
+  overflow-x: auto;
+  background: linear-gradient(to top, rgba(11, 13, 16, 0.8), transparent);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.room {
+  flex: 0 0 auto;
+  width: 7rem;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  background: rgba(8, 10, 13, 0.6);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition:
+    border-color $duration-fast $ease-out,
+    transform $duration-fast $ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &[data-active] {
+    border-color: $accent;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 3.2rem;
+    // La panorámica es 2:1; recortada al centro se reconoce el ambiente.
+    object-fit: cover;
+  }
+
+  span {
+    display: block;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: $tracking-normal;
+    color: $text-secondary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &[data-active] span {
+    color: $text-primary;
+  }
+}
+
+@media (max-width: $bp-tablet) {
+  .room {
+    width: 5.5rem;
+
+    img {
+      height: 2.6rem;
+    }
+  }
+}
+
+/*
+ * Etiqueta del salto.
+ *
+ * Mismo lenguaje que las etiquetas de los hotspots de la torre: quien aprendió
+ * a tocar una ya sabe tocar la otra.
+ */
+.marker {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  font-family: $font-sans;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: $text-secondary;
+  background: rgba(12, 14, 18, 0.55);
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  backdrop-filter: blur(6px);
+  user-select: none;
+  transition:
+    color $duration-fast $ease-out,
+    border-color $duration-fast $ease-out,
+    background-color $duration-fast $ease-out;
+
+  &[data-active] {
+    color: $text-primary;
+    background: rgba(12, 14, 18, 0.78);
+    border-color: rgba(201, 162, 39, 0.5);
+  }
+}
+
+/*
+ * Panel de calibración.
+ *
+ * Solo aparece con ?calibrate=1. Medir los ángulos a ojo es imposible —nadie
+ * sabe cuántos grados a la derecha está una puerta— así que la herramienta
+ * los mide donde uno toca y deja el fragmento listo para pegar.
+ */
+.calibrate {
+  position: absolute;
+  top: 5rem;
+  left: $space-md;
+  max-width: 20rem;
+  padding: $space-sm;
+  background: rgba(8, 10, 13, 0.88);
+  border: 1px solid $surface-border;
+  border-radius: $radius-sm;
+  backdrop-filter: blur(8px);
+
+  p {
+    margin: 0 0 0.4rem;
+    font-size: 0.6rem;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    color: $accent;
+  }
+
+  code {
+    display: block;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.72rem;
+    color: $text-primary;
+    background: rgba(242, 240, 236, 0.06);
+    border-radius: 4px;
+    user-select: all;
+  }
+
+  small {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.66rem;
+    line-height: 1.4;
+    color: $text-muted;
+  }
+}

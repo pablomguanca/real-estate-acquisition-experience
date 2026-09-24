@@ -38,6 +38,21 @@ export interface Unit {
   floorId: string;
   /** Identificador comercial dentro del piso: "A", "B", "C"... */
   label: string;
+
+  /**
+   * A qué tipología pertenece: "A", "2R", "Duplex Norte".
+   *
+   * Es lo que permite que el recorrido virtual, los planos y los renders de
+   * interior se carguen UNA vez por tipología y no una vez por unidad. En una
+   * torre de cuarenta y cuatro unidades con cuatro tipologías, la diferencia
+   * es entre pedirle al estudio veinticuatro panorámicas o doscientas
+   * sesenta y cuatro.
+   *
+   * El 1603 y el 0803 son el mismo departamento a distinta altura: mismo
+   * plano, mismos ambientes, mismos materiales. Lo único que cambia es lo que
+   * se ve por la ventana.
+   */
+  typology: string;
   status: UnitStatus;
   footprint: UnitFootprint;
 

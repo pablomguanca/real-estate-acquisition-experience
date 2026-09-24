@@ -57,6 +57,29 @@ describe('importProject', () => {
     expect(project!.floors[0]!.label).toBe('01');
   });
 
+  it('guarda la tipología de cada unidad', () => {
+    // Es lo que permite cargar el recorrido virtual una vez por tipología y
+    // no una vez por unidad: en una torre de 44 unidades con 4 tipologías, la
+    // diferencia es entre pedir 24 panorámicas o 264.
+    const csv = [
+      'piso,unidad,tipologia,cubierta,ambientes',
+      '1,101,2R,58,3',
+      '2,201,2R,58,3',
+      '1,102,1R,42,2',
+    ].join('\n');
+
+    const { project } = importProject(csv, GEOMETRY);
+    const todas = project!.floors.flatMap((floor) => floor.units);
+
+    expect(todas.filter((u) => u.typology === '2R')).toHaveLength(2);
+    expect(todas.find((u) => u.label === '102')!.typology).toBe('1R');
+  });
+
+  it('usa la unidad como tipología cuando la planilla no la trae', () => {
+    const { project } = importProject(CSV, GEOMETRY);
+    expect(project!.floors[0]!.units[0]!.typology).toBe('A');
+  });
+
   it('calcula la superficie total y respeta la cubierta declarada', () => {
     const { project } = importProject(CSV, GEOMETRY);
     const unit = project!.floors[0]!.units[0]!;

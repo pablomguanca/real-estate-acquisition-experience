@@ -109,6 +109,9 @@ function buildUnits(floorId: string, index: number, level: number): Unit[] {
       id: `${floorId}-${label.toLowerCase()}`,
       floorId,
       label,
+      // En este desarrollo la unidad y la tipología coinciden: cada planta
+      // repite las mismas cuatro. En un edificio real no tiene por qué.
+      typology: label,
       status,
       footprint: typology.footprint,
 

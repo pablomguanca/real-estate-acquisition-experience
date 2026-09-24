@@ -1,5 +1,6 @@
 import type { Amenity } from './amenity';
 import type { Floor } from './floor';
+import type { ProjectTours } from './tour';
 import type { SceneOverrides } from './scene';
 
 /**
@@ -28,6 +29,13 @@ export interface Project extends ProjectIdentity {
   scene: SceneOverrides;
   amenities: Amenity[];
   floors: Floor[];
+  /**
+   * Recorridos virtuales, uno por tipología.
+   *
+   * Vacío mientras no existan: la ficha esconde el botón sola en vez de
+   * ofrecer un recorrido que no va a abrir nada.
+   */
+  tours: ProjectTours;
 }
 
 /**

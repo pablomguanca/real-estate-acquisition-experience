@@ -1,8 +1,12 @@
+import { useEffect, useState } from 'react';
+
 import { UNIT_STATUS } from '../../config/status';
+import { useProject } from '../../context/ProjectContext';
 import type { Floor, Unit } from '../../types/floor';
 import { Panel } from './Panel';
 import { Gallery } from './Gallery';
 import { UnitPlan } from './UnitPlan';
+import { UnitTour } from './UnitTour';
 import styles from './PanelContent.module.scss';
 
 /**
@@ -29,11 +33,25 @@ const priceFormatter = new Intl.NumberFormat('es-AR', {
 });
 
 export function UnitPanel({ unit, floor, onClose }: UnitPanelProps) {
+  const { project } = useProject();
+  const [tourOpen, setTourOpen] = useState(false);
+
   const status = unit ? UNIT_STATUS[unit.status] : null;
   const name = unit && floor ? `Unidad ${floor.label}${unit.label}` : undefined;
 
+  // El recorrido es de la TIPOLOGÍA: el 1603 y el 0803 son el mismo
+  // departamento a distinta altura, así que comparten panorámicas.
+  const rooms = unit ? (project.tours[unit.typology] ?? []) : [];
+
+  // Cambiar de unidad con el recorrido abierto mostraría el departamento
+  // anterior bajo un título nuevo.
+  useEffect(() => {
+    setTourOpen(false);
+  }, [unit?.id]);
+
   return (
-    <Panel open={unit !== null} onClose={onClose} label={name}>
+    <>
+    <Panel open={unit !== null} onClose={onClose} label={name} blockEscape={tourOpen}>
       {unit && floor && status && (
         <>
           <p className={styles.eyebrow}>Unidad</p>
@@ -99,8 +117,34 @@ export function UnitPanel({ unit, floor, onClose }: UnitPanelProps) {
             images={unit.gallery}
             name={`Unidad ${floor.label}${unit.label}`}
           />
+
+          {/* Sin panorámicas cargadas el botón no existe: ofrecer un
+              recorrido que abre una pantalla vacía es peor que no ofrecerlo. */}
+          {rooms.length > 0 && (
+            <button
+              type="button"
+              className={styles.tourButton}
+              onClick={() => setTourOpen(true)}
+            >
+              Recorrer la unidad
+              {/* "Espacios" y no "ambientes": ambientes es un dato comercial
+                  de la ficha de arriba —un dos ambientes es un dos ambientes—
+                  y usar la misma palabra para contar panorámicas haría que la
+                  unidad se contradiga a sí misma. */}
+              <span>{rooms.length} espacios</span>
+            </button>
+          )}
         </>
       )}
     </Panel>
+
+    {tourOpen && unit && floor && (
+      <UnitTour
+        rooms={rooms}
+        title={`Unidad ${floor.label}${unit.label}`}
+        onClose={() => setTourOpen(false)}
+      />
+    )}
+    </>
   );
 }

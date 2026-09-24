@@ -9,6 +9,7 @@ import {
 } from '../../src/data/spreadsheet';
 import type { Floor, Unit, UnitFootprint, UnitStatus } from '../../src/types/floor';
 import type { Project } from '../../src/types/project';
+import type { ProjectTours } from '../../src/types/tour';
 import type { SceneOverrides } from '../../src/types/scene';
 
 /**
@@ -57,6 +58,14 @@ export interface Geometry {
   footprints?: Record<string, { offset: [number, number]; size: [number, number] }>;
   /** Overrides de escena, si el desarrollo ya se calibró. */
   scene?: SceneOverrides;
+  /**
+   * Recorridos virtuales por tipología.
+   *
+   * Van acá y no en el archivo generado porque reimportar lo pisa entero: si
+   * vivieran del otro lado, cada actualización de la lista de precios se
+   * llevaría puesto el trabajo de cargar las panorámicas.
+   */
+  tours?: ProjectTours;
 }
 
 export interface ImportResult {
@@ -293,6 +302,7 @@ export function importProject(csv: string, geometry: Geometry): ImportResult {
           id: `${id}-${unit.label.toLowerCase()}`,
           floorId: id,
           label: unit.label,
+          typology: unit.typology,
           status: unit.status,
           footprint,
           area: unit.covered + unit.balcony,
@@ -356,6 +366,7 @@ export function importProject(csv: string, geometry: Geometry): ImportResult {
       // salen de una planilla. Se agregan a mano después de calibrar.
       amenities: [],
       floors,
+      tours: geometry.tours ?? {},
     },
     errors,
     warnings,

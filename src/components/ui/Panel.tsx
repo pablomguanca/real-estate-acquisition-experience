@@ -15,10 +15,19 @@ interface PanelProps {
   onClose: () => void;
   /** Nombre accesible del diálogo. */
   label?: string;
+  /**
+   * Desactiva el cierre con Escape mientras otra capa está encima.
+   *
+   * Sin esto, abrir el recorrido sobre la ficha y apretar Escape cerraría las
+   * dos de un golpe: los dos oyentes viven en window y ninguno sabe del otro.
+   * Misma razón por la que App decide la precedencia entre la ficha y el modo
+   * pisos en vez de frenar el evento.
+   */
+  blockEscape?: boolean;
   children: ReactNode;
 }
 
-export function Panel({ open, onClose, label, children }: PanelProps) {
+export function Panel({ open, onClose, label, blockEscape, children }: PanelProps) {
   const bodyRef = useRef<HTMLDivElement>(null);
   const lastChildren = useRef<ReactNode>(null);
   const lastLabel = useRef<string | undefined>(undefined);
@@ -43,7 +52,7 @@ export function Panel({ open, onClose, label, children }: PanelProps) {
   // se montó primero. La precedencia la resuelve App, que es quien conoce
   // todo el estado. Ver el oyente de Escape en App.tsx.
   useEffect(() => {
-    if (!open) return;
+    if (!open || blockEscape) return;
 
     const handle = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose();
@@ -51,7 +60,7 @@ export function Panel({ open, onClose, label, children }: PanelProps) {
 
     window.addEventListener('keydown', handle);
     return () => window.removeEventListener('keydown', handle);
-  }, [open, onClose]);
+  }, [open, blockEscape, onClose]);
 
   return (
     <aside

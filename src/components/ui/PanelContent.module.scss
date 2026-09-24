@@ -125,3 +125,41 @@
     background: currentColor;
   }
 }
+
+/*
+ * Entrada al recorrido virtual.
+ *
+ * Ancho completo y por debajo de la galería: es la acción más fuerte de la
+ * ficha, pero va después de los datos duros. Quien llega hasta acá ya sabe
+ * cuánto mide y cuánto cuesta; el recorrido es lo que lo convence, no lo que
+ * lo informa.
+ */
+.tourButton {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-sm;
+  width: 100%;
+  margin-top: $space-sm;
+  padding: 0.7rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.82rem;
+  letter-spacing: $tracking-normal;
+  color: $bg-deep;
+  background: $accent;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: filter $duration-fast $ease-out;
+
+  &:hover {
+    filter: brightness(1.08);
+  }
+
+  span {
+    font-size: 0.62rem;
+    letter-spacing: $tracking-wide;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+}

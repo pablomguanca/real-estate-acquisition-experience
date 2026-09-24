@@ -80,6 +80,46 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "$HOME\.secrets\atenea-service-account.jso
 npm run grant -- ventas@desarrolladora.com editor <slug>
 ```
 
+## Recorridos virtuales
+
+Van en el archivo de geometría, **por tipología**:
+
+```json
+"tours": {
+  "2R": [
+    { "id": "living", "name": "Living comedor", "panorama": "projects/torre-del-sol/tours/2r/living.jpg" },
+    { "id": "dorm-1", "name": "Dormitorio principal", "panorama": "projects/torre-del-sol/tours/2r/dorm-1.jpg" }
+  ]
+}
+```
+
+Por tipología y no por unidad: el 1603 y el 0803 son el mismo departamento a distinta altura. En una torre de 44 unidades con 4 tipologías, la diferencia es entre pedirle al estudio 24 panorámicas o 264.
+
+Para que funcione, la columna `tipologia` de la planilla tiene que coincidir con la clave de acá. Si la planilla no trae esa columna, se usa la letra de la unidad.
+
+**Formato**: JPEG equirectangular, proporción 2:1 (4096 × 2048 es lo habitual). Se piden al mismo estudio que hace los renders — es la misma escena con otra cámara.
+
+### Saltos entre ambientes
+
+Cada ambiente puede llevar a otros con marcadores anclados a un punto de la panorámica — tocar la puerta del dormitorio y entrar, en vez de volver al menú:
+
+```json
+{
+  "id": "living",
+  "name": "Living comedor",
+  "panorama": "projects/torre-del-sol/tours/2r/living.jpg",
+  "links": [{ "to": "dorm-1", "yaw": 42, "pitch": -8 }]
+}
+```
+
+Los ángulos son grados desde donde mira la cámara al abrirse el recorrido: **yaw 0 es el frente**, positivo gira a la derecha; **pitch 0 es el horizonte**, negativo mira al piso.
+
+**No los calcules a mano.** Abrí el recorrido con `?calibrate=1`, tocá la panorámica donde quieras el salto y el panel te da el fragmento listo, ya copiado al portapapeles. Solo queda completar el destino.
+
+Los saltos son opcionales: sin ellos el recorrido funciona igual con la lista de ambientes de abajo.
+
+El botón "Recorrer la unidad" aparece solo cuando hay panorámicas cargadas. Sin ellas no se muestra: ofrecer un recorrido que abre una pantalla vacía es peor que no ofrecerlo.
+
 ## Lo que NO sale de la planilla
 
 - **Los espacios comunes.** Se anclan a un punto del espacio 3D, así que se agregan a mano después de calibrar.

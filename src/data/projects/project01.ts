@@ -25,4 +25,8 @@ export const PROJECT_01: Project = {
 
   amenities: AMENITIES,
   floors: FLOORS,
+
+  // Sin panorámicas todavía: el botón de recorrido no aparece hasta que las
+  // haya. Se cargan por tipología en el archivo de geometría del desarrollo.
+  tours: {},
 };
