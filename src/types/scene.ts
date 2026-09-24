@@ -93,6 +93,35 @@ export interface RenderSettings {
   toneMappingExposure: number;
 }
 
+/**
+ * Post-proceso: lo que separa "un modelo 3D" de "un render".
+ *
+ * Tres efectos y ninguno más. La tentación es sumar profundidad de campo,
+ * aberración cromática y destellos, y ahí la pieza deja de parecer
+ * arquitectura y empieza a parecer un videojuego. Cada uno de estos está
+ * porque corrige algo que la escena cruda hace mal:
+ *
+ *   la oclusión ambiental asienta los volúmenes, que sin ella flotan;
+ *   el brillo da materialidad al vidrio, que sin él se lee como plástico;
+ *   el viñeteado lleva el ojo al edificio en vez de a las esquinas.
+ *
+ * Es parte de la escena y no una constante del código porque cada desarrollo
+ * pide su dosis: una torre vidriada aguanta más brillo que una de hormigón.
+ */
+export interface PostFxSettings {
+  enabled: boolean;
+  /** Fuerza de las sombras de contacto. Por encima de 2 se ve sucio. */
+  aoIntensity: number;
+  /** Alcance en metros. Grande difumina, chico marca solo las juntas. */
+  aoRadius: number;
+  /** Intensidad del brillo en los reflejos. */
+  bloomIntensity: number;
+  /** Desde qué luminancia brilla. Bajarlo de 0.8 enciende toda la escena. */
+  bloomThreshold: number;
+  /** Oscurecimiento de los bordes del cuadro. */
+  vignetteDarkness: number;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Terreno                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -170,6 +199,7 @@ export interface SceneSettings {
   sky: SkySettings;
   atmosphere: AtmosphereSettings;
   render: RenderSettings;
+  postFx: PostFxSettings;
   terrain: TerrainSettings;
   context: ContextSettings;
   camera: CameraSettings;

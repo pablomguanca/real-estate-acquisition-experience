@@ -11,6 +11,7 @@ import { CameraRig } from './CameraRig';
 import { Context } from './Context';
 import { Floors } from './Floors';
 import { Hotspots } from './Hotspots';
+import { PostFx } from './PostFx';
 import { IntroFlight } from './IntroFlight';
 import { SceneLights } from './SceneLights';
 import { Terrain } from './Terrain';
@@ -131,6 +132,10 @@ export function Experience({
       )}
       {/* Solo hace algo si la capa de calibración está montada. */}
       <CalibrationProbe />
+
+      {/* Al final de todo: la cadena de efectos procesa el cuadro ya
+          renderizado, así que tiene que montarse después de la escena. */}
+      <PostFx />
       </ProjectBridge>
     </Canvas>
   );

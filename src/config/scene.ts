@@ -56,6 +56,22 @@ export const DEFAULT_SCENE: SceneSettings = {
     toneMappingExposure: 0.5,
   },
 
+  /**
+   * Calibrado contra el placeholder y la exposición de 0.5.
+   *
+   * El umbral de brillo está alto a propósito: solo los reflejos directos del
+   * sol sobre el vidrio lo superan. Con un umbral bajo el cielo entero se
+   * enciende y la escena pierde el contraste que le da profundidad.
+   */
+  postFx: {
+    enabled: true,
+    aoIntensity: 1.1,
+    aoRadius: 0.25,
+    bloomIntensity: 0.32,
+    bloomThreshold: 0.86,
+    vignetteDarkness: 0.42,
+  },
+
   terrain: {
     size: 700,
     segments: 140,
@@ -144,6 +160,7 @@ export function resolveScene(overrides: SceneOverrides = {}): ResolvedScene {
     sky: { ...DEFAULT_SCENE.sky, ...overrides.sky },
     atmosphere: { ...DEFAULT_SCENE.atmosphere, ...overrides.atmosphere },
     render: { ...DEFAULT_SCENE.render, ...overrides.render },
+    postFx: { ...DEFAULT_SCENE.postFx, ...overrides.postFx },
     terrain: { ...DEFAULT_SCENE.terrain, ...overrides.terrain },
     context: { ...DEFAULT_SCENE.context, ...overrides.context },
     camera: { ...DEFAULT_SCENE.camera, ...overrides.camera },
